@@ -1,0 +1,33 @@
+{
+  "name": "json-stream-filter",
+  "version": "0.0.0",
+  "description": "A CLI utility used to filter json streams in ways jq currently does not.",
+  "main": "filter-by-list",
+  "dependencies": {
+    "event-stream": "^3.1.7",
+    "json-path": "^0.1.3",
+    "through": "^2.3.6",
+    "yargs": "^1.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "json-stream-filter-in": "./filter-by-list"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tizzo/json-stream-filter.git"
+  },
+  "keywords": [
+    "json-stream",
+    "cli"
+  ],
+  "author": "Howard Tyson",
+  "license": "GPL2+",
+  "bugs": {
+    "url": "https://github.com/tizzo/json-stream-filter/issues"
+  },
+  "homepage": "https://github.com/tizzo/json-stream-filter"
+}

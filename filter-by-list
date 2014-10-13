@@ -1,0 +1,48 @@
+#! /usr/bin/env node
+var through = require('through');
+var es = require('event-stream');
+var yargs = require('yargs');
+var jpath = require('json-path');
+
+var argv = yargs
+  .usage('Filter items in a json event stream to show only items with a .uid value in the list.')
+  .demand(['values', 'path'])
+  .describe('values', 'The values to filter on. This should be a comma separated list.')
+  .alias('values', 'v')
+  .describe('path', 'The path to the value to filter upon in each record.')
+  .alias('path', 'p')
+  .describe('numeric', 'If the array of values should all be converted to numbers')
+  .alias('numeric', 'n')
+  .default('numeric', false)
+  .describe('invert', 'Invert the values to show only records *not* in the list.')
+  .alias('invert', 'i')
+  .default('invert', false)
+  .argv;
+
+var filterValues = argv.values.split(',');
+
+if (argv.numeric) {
+  filterValues = filterValues.map(function(item) {
+    return parseFloat(item);
+  });
+}
+
+process.stdin
+  .pipe(es.split())
+  .pipe(es.parse())
+  .pipe(through(function(data) {
+    var comparisonValues = jpath.resolve(data, argv.path);
+    var i = null;
+    var comparisonValue = null;
+    for (i in comparisonValues) {
+      comparisonValue = comparisonValues[i];
+      if (!argv.invert && filterValues.indexOf(parseInt(comparisonValue)) !== -1) {
+        this.emit('data', data);
+      }
+      if (argv.invert && filterValues.indexOf(parseInt(comparisonValue)) === -1) {
+        this.emit('data', data);
+      }
+    }
+  }))
+  .pipe(es.stringify())
+  .pipe(process.stdout);
